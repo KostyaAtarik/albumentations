@@ -1,6 +1,7 @@
 from __future__ import absolute_import, division
 
 import math
+import numbers
 import random
 import warnings
 from enum import Enum
@@ -1557,10 +1558,22 @@ class CoarseDropout(ImageOnlyTransform):
         img = params["image"]
         height, width = img.shape[:2]
 
+        min_height = self.min_height
+        if not isinstance(min_height, numbers.Integral):
+            min_height = round(min_height * height)
+        max_height = self.max_height
+        if not isinstance(max_height, numbers.Integral):
+            max_height = round(max_height * height)
+        min_width = self.min_width
+        if not isinstance(min_width, numbers.Integral):
+            min_width = round(min_width * width)
+        max_width = self.max_width
+        if not isinstance(max_width, numbers.Integral):
+            max_width = round(max_width * width)
         holes = []
         for _n in range(random.randint(self.min_holes, self.max_holes)):
-            hole_height = random.randint(self.min_height, self.max_height)
-            hole_width = random.randint(self.min_width, self.max_width)
+            hole_height = random.randint(min_height, max_height)
+            hole_width = random.randint(min_width, max_width)
 
             y1 = random.randint(0, height - hole_height)
             x1 = random.randint(0, width - hole_width)
